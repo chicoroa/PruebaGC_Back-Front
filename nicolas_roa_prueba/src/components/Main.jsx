@@ -108,6 +108,12 @@ class Main extends React.Component {
 
     filtoSelectAnno(e){
         let anno = e.target.value;
+        let pagination = document.getElementsByClassName("pagination")[0]
+        if(anno != 0){
+            pagination.setAttribute('style','display:none')
+        }else{
+            pagination.setAttribute('style','display:block')
+        }
         let labelEnfermedad = document.getElementsByClassName("nombreEnfermedad")[0]
         this.renderGrafico(labelEnfermedad.innerText, anno)
         this.renderTabla(labelEnfermedad.innerText, anno)
