@@ -16,6 +16,11 @@ function App() {
       ndle = data.Enfermedades.map(e => { return e })
       headers = data.Encabezados.map(e => { return e })
       columnas = data.Datos.map(e => { return e})
+  }else{
+    let respuesta = window.confirm("Se debe realizar la carga de datos... Desea realizarla? (Será redireccionado)")
+    if (respuesta) {
+      window.location.href='http://127.0.0.1:8000/insertarData/';
+    };
   }
 
   return (

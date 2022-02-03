@@ -1,7 +1,7 @@
 from django.db import models
 
 class Encabezados(models.Model):
-    nombre = models.CharField(max_length = 255)
+    nombre = models.CharField(max_length = 254)
     fieldName = models.CharField(max_length = 255, null=True)
 
 
