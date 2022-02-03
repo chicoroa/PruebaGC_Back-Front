@@ -24,7 +24,6 @@ class LeftBar extends React.Component{
     enfermedades(){
         let enfermedades = this.state.enfermedades;
         let r = enfermedades.map((e,i) => {
-            if(i > 2){
                 return (
                     <Row className="barra" key={`barra2_${i}`}>
                         <Col xs={10} md={10}>
@@ -38,7 +37,6 @@ class LeftBar extends React.Component{
                     </Row>
                 )   
     
-            } 
         })
 
         return r

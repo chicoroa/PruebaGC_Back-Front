@@ -11,6 +11,7 @@ class Main extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            nombreEnfermedad:"All Cause",
             annos:this.props.annos,
             anno:false,
             nombreDeLasEnfermedades:this.props.ndle,
@@ -40,7 +41,6 @@ class Main extends React.Component {
             labeles.map(m => {
                 let totalPorAnno = 0
                 filtradoData.map(e => {
-
                     if(e['year'] == m){
                         totalPorAnno += e[fieldName['fieldName']]
                     }
@@ -54,8 +54,7 @@ class Main extends React.Component {
                 }
             })
         }
-        
-        
+                
 
         this.setState({
             tituloGrafico:titulo,
@@ -68,8 +67,12 @@ class Main extends React.Component {
         let labeles = []
         
         this.props.encabezados.map((e,i) => {
-            if(i <= 2) labeles.push({"nombre":`${e.nombre}`, "fieldName":`${e.fieldName}`})
-            if(e.nombre == nombreEnfermedad) labeles.push({"nombre":`${e.nombre}`, "fieldName":`${e.fieldName}`})
+            if(nombreEnfermedad != "All Cause"){
+                if(i <= 2) labeles.push({"nombre":`${e.nombre}`, "fieldName":`${e.fieldName}`})
+                if(e.nombre == nombreEnfermedad) labeles.push({"nombre":`${e.nombre}`, "fieldName":`${e.fieldName}`})
+            }else{
+                labeles.push({"nombre":`${e.nombre}`, "fieldName":`${e.fieldName}`})
+            }
         })
         
         this.setState({
@@ -96,6 +99,9 @@ class Main extends React.Component {
             selectAnno.setAttribute("disabled", true)
         }
 
+        this.setState({
+            nombreEnfermedad:labelEnfermedad.innerText
+        })
         this.renderGrafico(nombreEnfermedad, anno)
         this.renderTabla(nombreEnfermedad, anno)
     }
@@ -134,22 +140,6 @@ class Main extends React.Component {
         }
     }
 
-    favoritos(){
-        let favoritos = localStorage.getItem("favoritos")
-        if(favoritos != ''){
-            if(favoritos.includes(',')){
-                favoritos.split(',').forEach(e => {
-                    let btn = document.getElementsByName(e)[0]
-                    btn.classList.remove("btn-dark")
-                    btn.classList.add("btn-danger")
-                });
-            }else{
-                let btn = document.getElementsByName(favoritos)[0]
-                btn.classList.remove("btn-dark")
-                btn.classList.add("btn-danger")
-            }
-        }
-    }
 
     cambiarPagina = (id) => {
         let pags = document.querySelector(".pagination > .active")
@@ -171,7 +161,6 @@ class Main extends React.Component {
 
     componentDidMount(){
         this.renderGrafico("All Cause")
-        this.favoritos()
     }
 
     render(){
@@ -186,7 +175,7 @@ class Main extends React.Component {
                     <Col xs={12} md={6}>
                         <SelectorFilter evento={this.filtoSelectAnno} data={this.props.annos}/>
                         <Chart labeles={this.state.labeles} data={this.state.dataGrafico} titulo={this.state.tituloGrafico}/>
-                        <Tabla headers={this.state.encabezados} columnas={this.state.columnas} annos={this.state.annos} annoSelected={this.state.anno} evento={this.cambiarPagina}/>
+                        <Tabla headers={this.state.encabezados} columnas={this.state.columnas} annos={this.state.annos} annoSelected={this.state.anno} nombreEnfermedad={this.state.nombreEnfermedad} evento={this.cambiarPagina}/>
                     </Col>
                 </Row>
             </Container>

@@ -8,27 +8,22 @@ class Tabla extends React.Component {
   constructor(props) {
     super(props);
     this.state = { 
-        anno: this.props.annos,
-        data: this.props.headers,
-        annoSelected: this.props.annoSelected,
-        totalPaginas: 0
+      anno: this.props.annos,
+      data: this.props.headers,
+      annoSelected: this.props.annoSelected,
+      totalPaginas: 0
     };
 }
 
   paginacion = () => {
     let tr = document.querySelectorAll('tbody > tr')
     let transformacion = Array.from(tr)
-    let g = 0
-    transformacion.map(e => {
-      if(!e.className.includes('d-none')) g++
-    })
-
     let items = [];
-    let totalPaginas = Math.ceil(g / 10)
+    let totalPaginas = Math.ceil(transformacion.length / 12)
     for (let number = 1; number <= totalPaginas; number++) {
       let id = `${number}_pag`
       items.push(
-        <Pagination.Item key={number} id={id} onClick={() => this.props.evento(id, (number * 10))}>
+        <Pagination.Item key={number} id={id} onClick={() => this.props.evento(id, (number * 12))}>
           {number}
         </Pagination.Item>,
       );
@@ -38,11 +33,22 @@ class Tabla extends React.Component {
   
   
   crearTabla = () => {
+
+    let annoSeleccionado = this.props.annoSelected
+    let nombreEnfermedad = this.props.nombreEnfermedad
+    let columnas = this.props.columnas
+    let th = this.props.headers
+    let tr = []
+    
+    let obj = th.map(x => {
+      return x.fieldName 
+    })
+
     let headers = this.props.headers.map((e,i) =>{
       return (
           <OverlayTrigger key={i} overlay={
             <Tooltip id="tooltip-disabled">
-            <span>{ e.nombre }</span>
+            <span key={i}>{ e.nombre }</span>
           </Tooltip>  
           }>
           <th key={e.id}>{ e.nombre.length >= 10 ? e.nombre : e.nombre }</th>
@@ -50,35 +56,38 @@ class Tabla extends React.Component {
       )
     })
 
-    let columnas = this.props.columnas
-    let th = this.props.headers
-    let anno = this.props.anno
-    let tr = []
-    
-    let obj = th.map(x => {
-      return x.fieldName 
-    })
-    
-    const ordenamiento = (e) => {
+    const construccion = (obj, data, td) => {
+      obj.map(e =>{
+        td.push(<td>{data[e]}</td>);
+      })
+    }    
+
+    for(let data of columnas){
       let td = []
-      let annoSeleccionado = this.props.annoSelected
-      obj.map(x => {
-        if(annoSeleccionado != false){
-          if(e['year'] == annoSeleccionado){
-            td.push(<td>{e[x]}</td>)
+      if(nombreEnfermedad == "All Cause"){
+        if(annoSeleccionado !== false){
+          if(data.year == annoSeleccionado){
+              construccion(obj, data, td)
+          }else if(annoSeleccionado == 0){
+              construccion(obj, data, td)
           }
         }else{
-          td.push(<td>{e[x]}</td>)
+          construccion(obj, data, td)
         }
-      }) 
-      return td;
+      }else if(nombreEnfermedad != "All Cause"){
+        if(annoSeleccionado !== false){
+          if(data.year == annoSeleccionado){
+            construccion(obj, data, td)
+          }
+        }else{
+          construccion(obj, data, td)
+        }
+      }
+
+      if(td.length != 0){
+        tr.push(<tr key={data['id']}>{td}</tr>)
+      }
     }
-
-    columnas.map(e => {
-      let r = ordenamiento(e)
-      tr.push(<tr>{r}</tr>) 
-    })
-
 
     let datosTabla = []
     datosTabla.push(headers)
@@ -94,13 +103,13 @@ class Tabla extends React.Component {
       let primeraPag = document.getElementById(`${c}_pag`).parentElement.classList.add('active')
       transformacion.map((e,i) => {
         
-        if(i % 10 == 0){
+        if(i % 12 == 0){
           clase = `${c}_pag`
           c++
         }
         e.setAttribute('class', clase)
 
-        if(i > 10){
+        if(i >= 12){
           e.classList.add('d-none')
         }
 
@@ -108,7 +117,7 @@ class Tabla extends React.Component {
   }
 
   componentDidUpdate(){
-    this.columnas() 
+    this.columnas()
   }
 
   render(){
@@ -116,13 +125,13 @@ class Tabla extends React.Component {
     let paginacion = this.paginacion()
      return (
        <>
-       <Table striped bordered hover responsive>
-          <thead>
-          <tr>
+       <Table striped bordered hover responsive key="Table">
+          <thead key="thead">
+          <tr key="tr_th">
             {datosTabla[0]}
           </tr>
           </thead>
-          <tbody>
+          <tbody key="tbody">
             {datosTabla[1]}
           </tbody>
         </Table>

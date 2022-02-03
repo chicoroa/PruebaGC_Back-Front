@@ -72,13 +72,29 @@ class insertarData(generics.ListAPIView):
             motor_vehicle_accidents = motor_vehicle_accidents, intentional_self_harm_suicide = intentional_self_harm_suicide, 
             assault_homicide = assault_homicide,drug_overdose = drug_overdose) 
 
-    def respuesta():
-        return Response("La data fue cargada con éxito")
-
     obtenerAnnos(meta)
     obtenerEncabezadosEnfermedades(meta)
     obtencionData(data)
-    respuesta()
+
+    def get(self, request):
+        annos = Annos.objects.all()
+        enfermedades = Enfermedades.objects.all()
+        encabezados = Encabezados.objects.all()
+        datos = Datos.objects.all()
+
+
+        listaAnnos = AnnosSerializer(annos, many=True)
+        listaEnfermedades = EnfermedadeSerializer(enfermedades, many=True)
+        datosEncabezados = EncabezadoSerializer(encabezados, many=True)
+        datosGenerales = DatoSerializer(datos, many=True)
+
+        return Response({
+            'Carga':"Se realiza la carga con éxito",
+            'Annos':listaAnnos.data,
+            'Enfermedades': listaEnfermedades.data,
+            'Encabezados': datosEncabezados.data,
+            'Datos': datosGenerales.data
+        })
     
 class obtenerDatos(generics.RetrieveAPIView):  
     def get(self, request):
