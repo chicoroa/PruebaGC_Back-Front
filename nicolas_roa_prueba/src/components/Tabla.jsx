@@ -19,12 +19,14 @@ class Tabla extends React.Component {
     let tr = document.querySelectorAll('tbody > tr')
     let transformacion = Array.from(tr)
     let items = [];
-    let totalPaginas = Math.ceil(transformacion.length / 12)
-    for (let number = 1; number <= totalPaginas; number++) {
-      let id = `${number}_pag`
+    let totalPaginas = 0
+        totalPaginas = Math.ceil(transformacion.length / 12)
+    console.log(transformacion.length / 12);
+    for (let num = 1; num <= totalPaginas; num++) {
+      let id = `${num}_pag`
       items.push(
-        <Pagination.Item key={number} id={id} onClick={() => this.props.evento(id, (number * 12))}>
-          {number}
+        <Pagination.Item key={num} id={id} onClick={() => this.props.evento(id, (num * 12))}>
+          {num}
         </Pagination.Item>,
       );
     }
@@ -57,8 +59,8 @@ class Tabla extends React.Component {
     })
 
     const construccion = (obj, data, td) => {
-      obj.map(e =>{
-        td.push(<td>{data[e]}</td>);
+      obj.map((e,i) =>{
+        td.push(<td key={i}>{data[e]}</td>);
       })
     }    
 
@@ -69,6 +71,7 @@ class Tabla extends React.Component {
           if(data.year == annoSeleccionado){
               construccion(obj, data, td)
           }else if(annoSeleccionado == 0){
+            console.log(123);
               construccion(obj, data, td)
           }
         }else{
@@ -77,6 +80,8 @@ class Tabla extends React.Component {
       }else if(nombreEnfermedad != "All Cause"){
         if(annoSeleccionado !== false){
           if(data.year == annoSeleccionado){
+            construccion(obj, data, td)
+          }else if(annoSeleccionado == 0){
             construccion(obj, data, td)
           }
         }else{
@@ -98,6 +103,7 @@ class Tabla extends React.Component {
   columnas = () => {
       let tr = document.querySelectorAll('tbody > tr')
       let transformacion = Array.from(tr)
+      console.log(transformacion);
       let clase = 0
       let c = 1
       let primeraPag = document.getElementById(`${c}_pag`).parentElement.classList.add('active')

@@ -109,12 +109,10 @@ class Main extends React.Component {
     filtoSelectAnno(e){
         let anno = e.target.value;
         let pagination = document.getElementsByClassName("pagination")[0]
-        if(anno != 0){
-            pagination.setAttribute('style','display:none')
-        }else{
-            pagination.setAttribute('style','display:block')
-        }
         let labelEnfermedad = document.getElementsByClassName("nombreEnfermedad")[0]
+        this.setState({
+            annoSelected:anno
+        })
         this.renderGrafico(labelEnfermedad.innerText, anno)
         this.renderTabla(labelEnfermedad.innerText, anno)
     }
@@ -133,7 +131,7 @@ class Main extends React.Component {
                 e.target.classList.add("btn-danger")
                 this.setState({ favoritos:statusFav })
                 localStorage.removeItem("favoritos")
-                localStorage.setItem("favoritos", this.state.favoritos)
+                localStorage.setItem("favoritos", statusFav)
             }else{
                 statusFav.pop(name)
                 selectAnno.setAttribute("disabled", true)
@@ -141,11 +139,10 @@ class Main extends React.Component {
                 e.target.classList.remove("btn-danger")
                 this.setState({ favoritos:statusFav })
                 localStorage.removeItem("favoritos")
-                localStorage.setItem("favoritos", this.state.favoritos)
+                localStorage.setItem("favoritos", statusFav)
             }
         }
     }
-
 
     cambiarPagina = (id) => {
         let pags = document.querySelector(".pagination > .active")
@@ -165,7 +162,31 @@ class Main extends React.Component {
         }) 
     }
 
+    crearFavoritosLocales = () => {
+        let ls = localStorage.getItem("favoritos")
+        if(ls !== null){
+            console.log(1);
+            if(ls.includes(",")){
+                let lsArray = ls.split(",")
+                lsArray.map(e => {
+                    let btn = document.getElementsByName(e)[0]
+                    btn.classList.remove("btn-dark")
+                    btn.classList.add("btn-danger")    
+                    console.log(e);
+                })
+            }else{
+                let btn = document.getElementsByName(ls)[0]
+                btn.classList.remove("btn-dark")
+                btn.classList.add("btn-danger")
+            }
+        }else{
+            console.log(12);
+        }
+
+    }
+
     componentDidMount(){
+        this.crearFavoritosLocales()
         this.renderGrafico("All Cause")
     }
 
